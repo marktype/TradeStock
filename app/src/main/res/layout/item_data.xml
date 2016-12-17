@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/lin_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/is_buy"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:background="@drawable/rect_circle_black_shape"
+            android:padding="20dp"
+            android:text="1"/>
+        <TextView
+            android:id="@+id/goods_num"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:background="@drawable/rect_circle_black_shape"
+            android:padding="20dp"
+            android:text="2"/>
+        <TextView
+            android:id="@+id/creat_levl"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/rect_circle_black_shape"
+            android:gravity="center"
+            android:padding="20dp"
+            android:text="3"/>
+
+
+        <TextView
+            android:id="@+id/cerat_levl_two"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/rect_circle_black_shape"
+            android:gravity="center"
+            android:padding="20dp"
+            android:text="4"/>
+
+
+    </LinearLayout>
+</LinearLayout>

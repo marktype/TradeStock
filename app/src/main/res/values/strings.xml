@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">TradeStock</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="text_info">约定书测试约定书测试约定书测试约定
+        书测试约定书测试约定书测试约定书测试约定书测试约定书测试约定书测试约定书测测试
+        约定书测试约定书测测试约定书测试约定书测测试约定书测试约定书测测试约定书测试约定书测测试约定书测试约定书测
+        测试约定书测试约定书测测试约定书测试约定书测测试约定书测试约定书测试约定书测试</string>
+</resources>

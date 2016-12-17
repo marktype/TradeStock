@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="app_yellow">#D2AF2F</color>
+    <color name="app_red">#FE0000</color>
+    <!--状态栏颜色-->
+    <color name="status_color">#1E1E1E</color>
+    <color name="text_color">#6F4F1F</color>
+    <color name="bg_color">#F0EAD1</color>
+    <color name="text_gray_color">#858585</color>
+    <color name="text_bg_color">#525252</color>
+
+    <color name="buy_color">#B60909</color>
+    <color name="green_color">#188218</color>
+    <color name="view_bg_color">#303030</color>
+</resources>
