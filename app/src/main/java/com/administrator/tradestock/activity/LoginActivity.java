@@ -1,6 +1,7 @@
 package com.administrator.tradestock.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -11,6 +12,10 @@ import android.widget.TextView;
 import com.administrator.tradestock.R;
 import com.administrator.tradestock.customview.AuthCodeView;
 import com.administrator.tradestock.util.HttpManagerUtil;
+import com.administrator.tradestock.util.SharePrenceUtil;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
@@ -92,30 +97,30 @@ public class LoginActivity extends BascActivity implements View.OnClickListener{
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
 
-            //测试
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(intent);
+//            //测试
+//            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+//            startActivity(intent);
 
             //正式
-//            if (s.contains("status")&&s.contains("openid")){
-//                showToast("登陆成功");
-//                SharedPreferences sp = SharePrenceUtil.getShareSaveUserInfo(LoginActivity.this);
-//                SharedPreferences.Editor editor = sp.edit();
-//                try {
-//                    JSONObject object = new JSONObject(s);
-//                    String opennid = object.getString("openid");
-//                    editor.putString(SharePrenceUtil.OPEN_ID,opennid);
-//                    editor.commit();
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-//                startActivity(intent);
-//            }else if (s.contains("status")){
-//                showToast("登陆失败");
-//            }else {
-//                showToast(s);
-//            }
+            if (s.contains("status")&&s.contains("openid")){
+                showToast("登陆成功");
+                SharedPreferences sp = SharePrenceUtil.getShareSaveUserInfo(LoginActivity.this);
+                SharedPreferences.Editor editor = sp.edit();
+                try {
+                    JSONObject object = new JSONObject(s);
+                    String opennid = object.getString("openid");
+                    editor.putString(SharePrenceUtil.OPEN_ID,opennid);
+                    editor.commit();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent);
+            }else if (s.contains("status")){
+                showToast("登陆失败");
+            }else {
+                showToast(s);
+            }
 
         }
     }
