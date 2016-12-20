@@ -39,7 +39,10 @@
             android:layout_alignParentRight="true"
             android:layout_marginLeft="10dp"
             android:background="@color/app_yellow"
-            android:padding="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="@dimen/margin_5dp"
+            android:paddingTop="@dimen/margin_5dp"
             android:layout_centerVertical="true"
             android:src="@mipmap/search" />
 
@@ -53,7 +56,10 @@
             android:background="@drawable/rect_circle_white_black_shape"
             android:drawableRight="@mipmap/down_title"
             android:gravity="center"
-            android:padding="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="@dimen/margin_5dp"
+            android:paddingTop="@dimen/margin_5dp"
             android:text="全部"
             android:textColor="@android:color/white"
             android:textSize="@dimen/title_size" />

@@ -189,6 +189,8 @@ public class TradeFragment extends BaseFragment implements RadioGroup.OnCheckedC
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 TitleInfo info = (TitleInfo) adapterView.getAdapter().getItem(i);
                 mTitle.setText(info.getGoodsName());
+                UserInfoAsyn userInfoAsyn = new UserInfoAsyn();
+                userInfoAsyn.execute(sp.getString(SharePrenceUtil.OPEN_ID, ""), info.getGoodsCode());
                 mPopProWindow.dismiss();
             }
         });
@@ -297,10 +299,10 @@ public class TradeFragment extends BaseFragment implements RadioGroup.OnCheckedC
     private void parseGoodsInfo(GoodsInfo info) {
         mUserName.setText("昵称："+info.getTruename());
         mYue.setText("￥"+info.getMoney());
-        SharedPreferences.Editor editor = sp.edit();
-        editor.putString(SharePrenceUtil.NAME,info.getTruename());
-        editor.putString(SharePrenceUtil.USER_PHONE,info.getMobile());
-        editor.putString(SharePrenceUtil.YU_E,info.getMoney());
-        editor.commit();
+//        SharedPreferences.Editor editor = sp.edit();
+//        editor.putString(SharePrenceUtil.NAME,info.getTruename());
+//        editor.putString(SharePrenceUtil.USER_PHONE,info.getMobile());
+//        editor.putString(SharePrenceUtil.YU_E,info.getMoney());
+//        editor.commit();
     }
 }

@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.administrator.tradestock.R;
 
@@ -17,7 +18,7 @@ import com.administrator.tradestock.R;
  * Use the {@link ShiJiaCreatFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ShiJiaCreatFragment extends Fragment {
+public class ShiJiaCreatFragment extends Fragment implements View.OnClickListener{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -27,7 +28,7 @@ public class ShiJiaCreatFragment extends Fragment {
     private String mParam1;
     private String mParam2;
     private View mView;
-    private EditText mEditPoint;
+    private EditText mEditPoint,mHandNum;
 
     public ShiJiaCreatFragment() {
         // Required empty public constructor
@@ -73,6 +74,13 @@ public class ShiJiaCreatFragment extends Fragment {
     private void initWidget(){
         CheckBox mCheck = (CheckBox) mView.findViewById(R.id.trade_checked);
         mEditPoint = (EditText) mView.findViewById(R.id.edit_point);
+        TextView mClearData = (TextView) mView.findViewById(R.id.clear_data);
+        TextView mPlaceOrder = (TextView) mView.findViewById(R.id.place_order);
+        TextView mOncePlaceOrder = (TextView) mView.findViewById(R.id.once_place_order);
+        mHandNum = (EditText) mView.findViewById(R.id.hand_num);
+        TextView mMaxNum = (TextView) mView.findViewById(R.id.max_num);
+
+
         mEditPoint.setEnabled(false);
         mEditPoint.setText("");
         mCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -86,6 +94,26 @@ public class ShiJiaCreatFragment extends Fragment {
                 }
             }
         });
+
+        mClearData.setOnClickListener(this);
+        mPlaceOrder.setOnClickListener(this);
+        mOncePlaceOrder.setOnClickListener(this);
+        mMaxNum.setOnClickListener(this);
     }
 
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.clear_data:
+                mHandNum.setText("");
+                mEditPoint.setText("");
+                break;
+            case R.id.place_order:
+                break;
+            case R.id.once_place_order:
+                break;
+            case R.id.max_num:
+                break;
+        }
+    }
 }

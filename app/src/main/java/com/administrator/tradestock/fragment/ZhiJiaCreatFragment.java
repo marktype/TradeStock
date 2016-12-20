@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.administrator.tradestock.R;
 
@@ -17,7 +18,7 @@ import com.administrator.tradestock.R;
  * Use the {@link ZhiJiaCreatFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ZhiJiaCreatFragment extends Fragment {
+public class ZhiJiaCreatFragment extends Fragment implements View.OnClickListener{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -27,7 +28,7 @@ public class ZhiJiaCreatFragment extends Fragment {
     private String mParam1;
     private String mParam2;
     private View mView;
-    private EditText mEditStopLost,mEditStopGet;
+    private EditText mEditStopLost,mEditStopGet,mHandNum,mPriceNum;
 
 
     public ZhiJiaCreatFragment() {
@@ -76,6 +77,12 @@ public class ZhiJiaCreatFragment extends Fragment {
         CheckBox mCheckStopGet = (CheckBox) mView.findViewById(R.id.check_stop_get);
         mEditStopLost = (EditText) mView.findViewById(R.id.edit_stop_lost);
         mEditStopGet = (EditText) mView.findViewById(R.id.edit_stop_get);
+        TextView mClearData = (TextView) mView.findViewById(R.id.clear_data);
+        TextView mPlaceOrder = (TextView) mView.findViewById(R.id.place_order);
+        TextView mOncePlaceOrder = (TextView) mView.findViewById(R.id.once_place_order);
+        mHandNum = (EditText) mView.findViewById(R.id.hand_num);
+        TextView mMaxNum = (TextView) mView.findViewById(R.id.max_num);
+        mPriceNum = (EditText) mView.findViewById(R.id.price_num);
 
 
         mEditStopLost.setEnabled(false);
@@ -104,6 +111,27 @@ public class ZhiJiaCreatFragment extends Fragment {
                 }
             }
         });
+        mClearData.setOnClickListener(this);
+        mPlaceOrder.setOnClickListener(this);
+        mOncePlaceOrder.setOnClickListener(this);
+        mMaxNum.setOnClickListener(this);
     }
 
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.clear_data:
+                mHandNum.setText("");
+                mEditStopLost.setText("");
+                mEditStopGet.setText("");
+                mPriceNum.setText("");
+                break;
+            case R.id.place_order:
+                break;
+            case R.id.once_place_order:
+                break;
+            case R.id.max_num:
+                break;
+        }
+    }
 }

@@ -2,9 +2,10 @@ package com.administrator.tradestock.fragment;
 
 
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +18,13 @@ import com.administrator.tradestock.activity.BandBankCardActivity;
 import com.administrator.tradestock.activity.MyMoenyListActivity;
 import com.administrator.tradestock.activity.RealNameActivity;
 import com.administrator.tradestock.activity.TradeListActivity;
+import com.administrator.tradestock.model.UserInfo;
+import com.administrator.tradestock.util.HttpManagerUtil;
 import com.administrator.tradestock.util.SharePrenceUtil;
+import com.google.gson.Gson;
+
+import okhttp3.FormBody;
+import okhttp3.RequestBody;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -39,7 +46,8 @@ public class MyFragment extends BaseFragment implements View.OnClickListener{
         if (mView == null){
             mView = inflater.inflate(R.layout.fragment_my_layout, container, false);
             initWidget();
-            initUserData();
+            UserInfoAsyn userInfoAsyn = new UserInfoAsyn();
+            userInfoAsyn.execute(SharePrenceUtil.getShareSaveUserInfo(getContext()).getString(SharePrenceUtil.OPEN_ID,""));
         }
         return mView;
     }
@@ -64,15 +72,6 @@ public class MyFragment extends BaseFragment implements View.OnClickListener{
         mRealName.setOnClickListener(this);
     }
 
-    /**
-     * 初始化用户数据
-     */
-    private void initUserData(){
-        SharedPreferences sp = SharePrenceUtil.getShareSaveUserInfo(getContext());
-        mUserName.setText("昵称："+sp.getString(SharePrenceUtil.NAME,""));
-        mUserPhone.setText("电话："+sp.getString(SharePrenceUtil.USER_PHONE,""));
-        mUserMoney.setText("￥"+sp.getString(SharePrenceUtil.YU_E,""));
-    }
 
     @Override
     public void onClick(View view) {
@@ -103,4 +102,37 @@ public class MyFragment extends BaseFragment implements View.OnClickListener{
 
         }
     }
+
+    /**
+     * 首页用户商品信息
+     */
+    private class UserInfoAsyn extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... strings) {
+            RequestBody formBody = new FormBody.Builder()
+                    .add("openid", strings[0])
+                    .build();
+            String message = HttpManagerUtil.getHttpManagerUtil().postHttpData(formBody, HttpManagerUtil.USER_INFO);
+            return message;
+        }
+
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            if (!TextUtils.isEmpty(s)){
+                Gson gson = new Gson();
+                UserInfo info = gson.fromJson(s,UserInfo.class);
+                parseUserInfo(info);
+            }
+
+        }
+    }
+    private void parseUserInfo(UserInfo info) {
+        mUserName.setText("昵称："+info.getTruename());
+        mUserPhone.setText("电话："+info.getMobile());
+        mUserMoney.setText("￥"+info.getMoney());
+    }
+
 }

@@ -17,6 +17,7 @@
             android:layout_height="wrap_content"
             android:text="手 数："/>
         <EditText
+            android:id="@+id/hand_num"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:text="336"
@@ -27,6 +28,7 @@
             android:textSize="@dimen/text_min_content_size"
             android:background="@drawable/rect_circle_white_shape"/>
         <TextView
+            android:id="@+id/max_num"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -116,6 +118,7 @@
             android:layout_height="wrap_content"
             android:text="价 格："/>
         <EditText
+            android:id="@+id/price_num"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:text="336"
@@ -276,6 +279,7 @@
         android:layout_margin="@dimen/margin_right_dp"
         android:layout_height="wrap_content">
         <TextView
+            android:id="@+id/clear_data"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -290,6 +294,7 @@
             android:text="清空"
             />
         <TextView
+            android:id="@+id/place_order"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@android:color/white"
@@ -306,6 +311,7 @@
             android:text="下单"
             />
         <TextView
+            android:id="@+id/once_place_order"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@android:color/white"

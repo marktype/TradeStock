@@ -17,7 +17,7 @@ import okhttp3.RequestBody;
 
 public class ForgetPasswordActivity extends BascActivity implements View.OnClickListener{
     private TextView mGetVerify;
-    private EditText mPasswordOne,mPasswordTwo,mPhone,mUserName,mVerify;
+    private EditText mPasswordOne,mPasswordTwo,mPhone,mVerify;
     private String passwordOne,passwordTwo,phone;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
