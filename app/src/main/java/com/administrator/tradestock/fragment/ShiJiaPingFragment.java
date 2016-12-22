@@ -1,33 +1,44 @@
 package com.administrator.tradestock.fragment;
 
 
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.administrator.tradestock.R;
+import com.administrator.tradestock.util.HttpManagerUtil;
+import com.administrator.tradestock.util.SharePrenceUtil;
+
+import okhttp3.FormBody;
+import okhttp3.RequestBody;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link ShiJiaPingFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ShiJiaPingFragment extends Fragment implements View.OnClickListener{
+public class ShiJiaPingFragment extends BaseFragment implements View.OnClickListener,RadioGroup.OnCheckedChangeListener{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private String mProCode;
+    private int mMaxNum;
     private View mView;
+    private String mBuyType;
+    private SharedPreferences sp;
     private EditText mEditPoint,mEditBack,mHandNum;
 
 
@@ -44,11 +55,11 @@ public class ShiJiaPingFragment extends Fragment implements View.OnClickListener
      * @return A new instance of fragment ShiJiaPingFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ShiJiaPingFragment newInstance(String param1, String param2) {
+    public static ShiJiaPingFragment newInstance(String param1, int param2) {
         ShiJiaPingFragment fragment = new ShiJiaPingFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putInt(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -57,8 +68,8 @@ public class ShiJiaPingFragment extends Fragment implements View.OnClickListener
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mProCode = getArguments().getString(ARG_PARAM1);
+            mMaxNum = getArguments().getInt(ARG_PARAM2);
         }
     }
 
@@ -66,6 +77,7 @@ public class ShiJiaPingFragment extends Fragment implements View.OnClickListener
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         if (mView == null){
+            sp = SharePrenceUtil.getShareSaveUserInfo(getContext());
             mView = inflater.inflate(R.layout.fragment_shi_jia_ping, container, false);
             initWidget();
         }
@@ -82,7 +94,7 @@ public class ShiJiaPingFragment extends Fragment implements View.OnClickListener
         TextView mOncePlaceOrder = (TextView) mView.findViewById(R.id.once_place_order);
         mHandNum = (EditText) mView.findViewById(R.id.hand_num);
         TextView mMaxNum = (TextView) mView.findViewById(R.id.max_num);
-
+        RadioGroup mGroup = (RadioGroup) mView.findViewById(R.id.into_group);
 
 
         mEditPoint.setEnabled(false);
@@ -115,6 +127,7 @@ public class ShiJiaPingFragment extends Fragment implements View.OnClickListener
         mPlaceOrder.setOnClickListener(this);
         mOncePlaceOrder.setOnClickListener(this);
         mMaxNum.setOnClickListener(this);
+        mGroup.setOnCheckedChangeListener(this);
     }
 
     @Override
@@ -126,11 +139,67 @@ public class ShiJiaPingFragment extends Fragment implements View.OnClickListener
                 mEditBack.setText("");
                 break;
             case R.id.place_order:
+                String num = mHandNum.getText().toString().trim();
+                if (!TextUtils.isEmpty(num)){
+                    int iNum= Integer.parseInt(num);
+                    if (iNum>mMaxNum){
+                        showToast("输入手数超过最大值");
+                    }else if (TextUtils.isEmpty(mBuyType)){
+                        showToast("请选择买入或卖出");
+                    }else {
+                        ShiJiaCreatAsyn shiJiaCreatAsyn = new ShiJiaCreatAsyn();
+                        shiJiaCreatAsyn.execute(num,mProCode,mBuyType,sp.getString(SharePrenceUtil.OPEN_ID,""));
+                    }
+                }else {
+                    showToast("手数为空，不能提交");
+                }
                 break;
             case R.id.once_place_order:
                 break;
             case R.id.max_num:
+                mHandNum.setText(mMaxNum+"");
                 break;
+        }
+    }
+
+    @Override
+    public void onCheckedChanged(RadioGroup radioGroup, int i) {
+        switch (i){
+            case R.id.buy_into:
+                mBuyType = "0";
+                break;
+            case R.id.buy_no:
+                mBuyType = "1";
+                break;
+        }
+    }
+
+    /**
+     *市价平仓
+     */
+    private class ShiJiaCreatAsyn extends AsyncTask<String,Void,String> {
+
+        @Override
+        protected String doInBackground(String... strings) {
+            RequestBody formBody = new FormBody.Builder()
+                    .add("nums", strings[0])
+                    .add("goods_code", strings[1])
+                    .add("mold", strings[2])
+                    .add("openid", strings[3])
+                    .build();
+            String message =  HttpManagerUtil.getHttpManagerUtil().postHttpData(formBody,HttpManagerUtil.SHIJIAPINGCANG);
+            return message;
+        }
+
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            if (s.contains("pock")){
+                showToast("下单成功");
+            }else {
+                showToast(s);
+            }
         }
     }
 }

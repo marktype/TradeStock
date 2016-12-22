@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.administrator.tradestock.R;
 import com.administrator.tradestock.activity.AlterPasswordActivity;
-import com.administrator.tradestock.activity.BandBankCardActivity;
+import com.administrator.tradestock.activity.BandBankCardListActivity;
 import com.administrator.tradestock.activity.MyMoenyListActivity;
 import com.administrator.tradestock.activity.RealNameActivity;
 import com.administrator.tradestock.activity.TradeListActivity;
@@ -92,7 +92,7 @@ public class MyFragment extends BaseFragment implements View.OnClickListener{
                 getActivity().finish();
                 break;
             case R.id.band_bank_card:
-                intent = new Intent(getContext(),BandBankCardActivity.class);
+                intent = new Intent(getContext(),BandBankCardListActivity.class);
                 startActivity(intent);
                 break;
             case R.id.real_name:

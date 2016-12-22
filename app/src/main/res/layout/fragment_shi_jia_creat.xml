@@ -67,10 +67,12 @@
             android:layout_height="wrap_content"
             android:text="买/卖："/>
         <RadioGroup
+            android:id="@+id/into_group"
             android:layout_width="match_parent"
             android:orientation="horizontal"
             android:layout_height="wrap_content">
         <RadioButton
+            android:id="@+id/buy_into"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -85,6 +87,7 @@
             android:textColor="@android:color/white"
             android:text="买入"/>
         <RadioButton
+            android:id="@+id/buy_no"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"

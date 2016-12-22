@@ -122,6 +122,7 @@
                 android:text="买入"
                 />
             <TextView
+                android:id="@+id/max_high"
                 android:text="最高：2965"
                 android:textColor="@color/text_gray_color"
                 android:layout_marginTop="10dp"
@@ -150,6 +151,7 @@
                 android:text="卖出"
                 />
             <TextView
+                android:id="@+id/max_low"
                 android:text="最低：2965"
                 android:textColor="@color/text_gray_color"
                 android:layout_marginTop="10dp"

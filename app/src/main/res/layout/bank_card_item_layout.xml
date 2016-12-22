@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@color/app_red"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/bank_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:src="@mipmap/ic_launcher"
+        />
+    <TextView
+        android:layout_toRightOf="@+id/bank_image"
+        android:text="中国银行"
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/bank_card_title"/>
+    <TextView
+        android:layout_toRightOf="@+id/bank_image"
+        android:layout_below="@+id/bank_card_title"
+        android:text="储蓄卡"
+        android:textSize="12sp"
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/bank_card_type"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="25446454566456545"
+        android:layout_margin="10dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/bank_card_type"
+        android:id="@+id/bank_card_num"/>
+</RelativeLayout>

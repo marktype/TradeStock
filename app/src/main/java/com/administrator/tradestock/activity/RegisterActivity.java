@@ -67,6 +67,9 @@ public class RegisterActivity extends BascActivity implements View.OnClickListen
                     Intent intent = new Intent(this,CompanyDefinedActivity.class);
                     intent.putExtra(Contants.REGISTR_INFO,userRegisterInfo);
                     startActivity(intent);
+                }else if (TextUtils.isEmpty(passwordOne)&&TextUtils.isEmpty(passwordTwo)&&
+                        TextUtils.isEmpty(phone)){
+                    showToast("请填写正确的验证码");
                 }else {
                     showToast("请填写完整信息");
                 }

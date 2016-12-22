@@ -23,6 +23,7 @@ import android.widget.TextView;
 
 import com.administrator.tradestock.R;
 import com.administrator.tradestock.adapter.GoodsTypeAdapter;
+import com.administrator.tradestock.model.BuyOrNoInfo;
 import com.administrator.tradestock.model.GoodTypeBean;
 import com.administrator.tradestock.model.GoodsInfo;
 import com.administrator.tradestock.model.TitleInfo;
@@ -46,9 +47,12 @@ public class TradeFragment extends BaseFragment implements RadioGroup.OnCheckedC
     private ShiJiaPingFragment secondFragment;
     private ZhiJiaCreatFragment thirdFragment;
     private ZhiJiaPingFragment fourFragment;
-    private TextView mTitle,mYue,mUserName;
+    private TextView mTitle,mYue,mUserName,mHigh,mLow;
     private List<TitleInfo> goodsTypeList;
     private SharedPreferences sp;
+    private int mMaxNum;
+    private String proCode;
+    private ApplyHttpThread thread;
 
     public TradeFragment() {
         // Required empty public constructor
@@ -69,10 +73,24 @@ public class TradeFragment extends BaseFragment implements RadioGroup.OnCheckedC
     }
 
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        isNow = true;
+        if (thread == null){
+            thread = new ApplyHttpThread();
+            thread.start();
+        }
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        isNow = false;
+//        thread.interrupt();
+        thread = null;
+    }
     //初始化  各种个 View
     private void initViews() {
-        firstFragment = ShiJiaCreatFragment.newInstance("", "");
-        getFragmentManager().beginTransaction().add(R.id.fragment_content_trade, firstFragment).commit();
         RadioGroup mGroup = (RadioGroup) mView.findViewById(R.id.trade_group);
         mShiJiaBtn = (RadioButton) mView.findViewById(R.id.shijia_creat);
         mShiJiaPing = (RadioButton) mView.findViewById(R.id.shijia_ping);
@@ -82,6 +100,8 @@ public class TradeFragment extends BaseFragment implements RadioGroup.OnCheckedC
         mTitle = (TextView) mView.findViewById(R.id.title_name);
         mYue = (TextView) mView.findViewById(R.id.yue_num);
         mUserName = (TextView) mView.findViewById(R.id.user_name);
+        mHigh = (TextView) mView.findViewById(R.id.max_high);
+        mLow = (TextView) mView.findViewById(R.id.max_low);
 
 
         mTitle.setOnClickListener(this);
@@ -113,7 +133,7 @@ public class TradeFragment extends BaseFragment implements RadioGroup.OnCheckedC
         switch (i) {
             case R.id.shijia_creat:
                 if (firstFragment == null) {
-                    firstFragment = ShiJiaCreatFragment.newInstance("", "");
+                    firstFragment = ShiJiaCreatFragment.newInstance(proCode, mMaxNum);
                     ft.add(R.id.fragment_content_trade, firstFragment);
                 } else {
                     ft.show(firstFragment);
@@ -121,7 +141,7 @@ public class TradeFragment extends BaseFragment implements RadioGroup.OnCheckedC
                 break;
             case R.id.shijia_ping:
                 if (secondFragment == null) {
-                    secondFragment = ShiJiaPingFragment.newInstance("", "");
+                    secondFragment = ShiJiaPingFragment.newInstance(proCode, mMaxNum);
                     ft.add(R.id.fragment_content_trade, secondFragment);
                 } else {
                     ft.show(secondFragment);
@@ -129,7 +149,7 @@ public class TradeFragment extends BaseFragment implements RadioGroup.OnCheckedC
                 break;
             case R.id.zhijia_creat:
                 if (thirdFragment == null) {
-                    thirdFragment = ZhiJiaCreatFragment.newInstance("", "");
+                    thirdFragment = ZhiJiaCreatFragment.newInstance(proCode, mMaxNum);
                     ft.add(R.id.fragment_content_trade, thirdFragment);
                 } else {
                     ft.show(thirdFragment);
@@ -191,6 +211,10 @@ public class TradeFragment extends BaseFragment implements RadioGroup.OnCheckedC
                 mTitle.setText(info.getGoodsName());
                 UserInfoAsyn userInfoAsyn = new UserInfoAsyn();
                 userInfoAsyn.execute(sp.getString(SharePrenceUtil.OPEN_ID, ""), info.getGoodsCode());
+
+                firstFragment = ShiJiaCreatFragment.newInstance(proCode, mMaxNum);
+                getFragmentManager().beginTransaction().add(R.id.fragment_content_trade, firstFragment).commit();
+
                 mPopProWindow.dismiss();
             }
         });
@@ -242,7 +266,7 @@ public class TradeFragment extends BaseFragment implements RadioGroup.OnCheckedC
                 GoodTypeBean goodTypeBean = gson.fromJson(s, GoodTypeBean.class);
                 parseGoodsType(goodTypeBean);
             } else {
-                showToast("获取信息失败");
+                showToast(s);
             }
 
         }
@@ -258,6 +282,10 @@ public class TradeFragment extends BaseFragment implements RadioGroup.OnCheckedC
                 mTitle.setText(data.get(0).getGoods_name());
                 UserInfoAsyn userInfoAsyn = new UserInfoAsyn();
                 userInfoAsyn.execute(sp.getString(SharePrenceUtil.OPEN_ID, ""), data.get(0).getGoods_code());
+                mMaxNum = data.get(0).getCcdnum();
+                proCode = data.get(0).getGoods_code();
+                firstFragment = ShiJiaCreatFragment.newInstance(proCode, mMaxNum);
+                getFragmentManager().beginTransaction().add(R.id.fragment_content_trade, firstFragment).commit();
                 for (int i = 0; i < num; i++) {
                     TitleInfo info = new TitleInfo();
                     info.setGoodsName(data.get(i).getGoods_name());
@@ -299,10 +327,56 @@ public class TradeFragment extends BaseFragment implements RadioGroup.OnCheckedC
     private void parseGoodsInfo(GoodsInfo info) {
         mUserName.setText("昵称："+info.getTruename());
         mYue.setText("￥"+info.getMoney());
-//        SharedPreferences.Editor editor = sp.edit();
-//        editor.putString(SharePrenceUtil.NAME,info.getTruename());
-//        editor.putString(SharePrenceUtil.USER_PHONE,info.getMobile());
-//        editor.putString(SharePrenceUtil.YU_E,info.getMoney());
-//        editor.commit();
+    }
+
+    /**
+     * 最高价最低价
+     */
+    private class MaxAsyn extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String message = HttpManagerUtil.getHttpManagerUtil().getHttpData(HttpManagerUtil.BUY_OR_NO);
+            return message;
+        }
+
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            if (!TextUtils.isEmpty(s)){
+                Gson gson = new Gson();
+                BuyOrNoInfo info = gson.fromJson(s,BuyOrNoInfo.class);
+                parseMaxInfo(info);
+            }
+
+        }
+    }
+
+    private void parseMaxInfo(BuyOrNoInfo info) {
+        mHigh.setText("最高："+info.getOil_price());
+        mLow.setText("最低："+info.getCu_price());
+    }
+
+    private Boolean isNow = true;   //是否停止线程
+    /**
+     * 执行循环请求
+     */
+    private class ApplyHttpThread extends Thread{
+
+
+        @Override
+        public void run() {
+            super.run();
+            while (isNow){
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                MaxAsyn asyn = new MaxAsyn();
+                asyn.execute();
+            }
+        }
     }
 }

@@ -5,5 +5,5 @@ package com.administrator.tradestock.util;
  */
 public class Contants {
 
-    public static String REGISTR_INFO;
+    public static String REGISTR_INFO;   //注册用户的信息
 }

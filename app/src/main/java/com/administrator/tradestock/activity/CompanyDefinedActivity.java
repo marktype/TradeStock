@@ -28,6 +28,7 @@ public class CompanyDefinedActivity extends BascActivity implements View.OnClick
     private CheckBox mCheckBox;
     private UserRegisterInfo userRegisterInfo;
     private TradeApplication main;
+    private TextView mContent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,9 +43,16 @@ public class CompanyDefinedActivity extends BascActivity implements View.OnClick
         ImageView mBackImg= (ImageView) findViewById(R.id.back_img);
         TextView mContinue = (TextView) findViewById(R.id.agree_and_continue);
         mCheckBox = (CheckBox) findViewById(R.id.check_btn);
+        TextView mSpRe = (TextView) findViewById(R.id.special_reminder);
+        TextView mGotoInto = (TextView) findViewById(R.id.go_into_xieyi);
+        TextView mFengXian = (TextView) findViewById(R.id.fengxian_jieshishu);
+        mContent = (TextView) findViewById(R.id.content_txt);
 
         mBackImg.setOnClickListener(this);
         mContinue.setOnClickListener(this);
+        mSpRe.setOnClickListener(this);
+        mGotoInto.setOnClickListener(this);
+        mFengXian.setOnClickListener(this);
     }
 
     @Override
@@ -60,6 +68,15 @@ public class CompanyDefinedActivity extends BascActivity implements View.OnClick
                 }else {
                     showToast("请先同意协议再注册");
                 }
+                break;
+            case R.id.special_reminder:
+                mContent.setText(R.string.text_info);
+                break;
+            case R.id.go_into_xieyi:
+                mContent.setText(R.string.text_two_info);
+                break;
+            case R.id.fengxian_jieshishu:
+                mContent.setText(R.string.text_three_info);
                 break;
         }
     }
@@ -103,7 +120,7 @@ public class CompanyDefinedActivity extends BascActivity implements View.OnClick
                 }
                 main.finishAll();
             }else {
-                showToast("注册失败");
+                showToast(s);
             }
         }
     }

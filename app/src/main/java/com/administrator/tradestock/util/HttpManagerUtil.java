@@ -17,6 +17,7 @@ public class HttpManagerUtil {
 
     public static String SERVICE_URL = "http://moni.mybiaojin.com/jy.php";   //服务器地址
 
+    public static String BUY_OR_NO = "http://moni.mybiaojin.com/getapi.php";  //首页买入卖出
     public static String INFO_CHECK = SERVICE_URL+"?jy=sever_rand";    //短信验证
     public static String LOGIN = SERVICE_URL+"?jy=app_login";    //登陆
     public static String REGISTER = SERVICE_URL+"?jy=user_reg";    //注册
@@ -24,6 +25,8 @@ public class HttpManagerUtil {
     public static String GOODS_LIST = SERVICE_URL+"?jy=wx_load";    //产品列表
     public static String ADD_SERIAL = SERVICE_URL+"?jy=add_serial";    //建仓
     public static String STOP_LOST = SERVICE_URL+"?jy=sz_zszy";    //止损
+    public static String SHIJIAPINGCANG = SERVICE_URL+"?jy=sjpc";    //市价平仓
+    public static String ZHIJIAJIANCANG = SERVICE_URL+"?jy=zjjc";    //指价建仓
     public static String LOAD_PING_LIST = SERVICE_URL+"?jy=load_pcd";    //平仓单列表
     public static String SELL_SERIAL = SERVICE_URL+"?jy=sell_serial";    //平仓
     public static String HOLD_SERIAL = SERVICE_URL+"?jy=serial";    //持仓+余额
