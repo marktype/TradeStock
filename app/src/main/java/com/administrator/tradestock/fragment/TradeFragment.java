@@ -31,6 +31,9 @@ import com.administrator.tradestock.util.HttpManagerUtil;
 import com.administrator.tradestock.util.SharePrenceUtil;
 import com.google.gson.Gson;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,7 +50,7 @@ public class TradeFragment extends BaseFragment implements RadioGroup.OnCheckedC
     private ShiJiaPingFragment secondFragment;
     private ZhiJiaCreatFragment thirdFragment;
     private ZhiJiaPingFragment fourFragment;
-    private TextView mTitle,mYue,mUserName,mHigh,mLow;
+    private TextView mTitle,mYue,mUserName,mHigh,mLow,mBuyNum,mBuyNoNum;
     private List<TitleInfo> goodsTypeList;
     private SharedPreferences sp;
     private int mMaxNum;
@@ -86,7 +89,6 @@ public class TradeFragment extends BaseFragment implements RadioGroup.OnCheckedC
     public void onPause() {
         super.onPause();
         isNow = false;
-//        thread.interrupt();
         thread = null;
     }
     //初始化  各种个 View
@@ -102,7 +104,8 @@ public class TradeFragment extends BaseFragment implements RadioGroup.OnCheckedC
         mUserName = (TextView) mView.findViewById(R.id.user_name);
         mHigh = (TextView) mView.findViewById(R.id.max_high);
         mLow = (TextView) mView.findViewById(R.id.max_low);
-
+        mBuyNum = (TextView) mView.findViewById(R.id.buy_num);
+        mBuyNoNum = (TextView) mView.findViewById(R.id.buy_no_num);
 
         mTitle.setOnClickListener(this);
         mGroup.setOnCheckedChangeListener(this);
@@ -215,6 +218,15 @@ public class TradeFragment extends BaseFragment implements RadioGroup.OnCheckedC
                 firstFragment = ShiJiaCreatFragment.newInstance(proCode, mMaxNum);
                 getFragmentManager().beginTransaction().add(R.id.fragment_content_trade, firstFragment).commit();
 
+                MaxMinAsyn maxMinAsyn = new MaxMinAsyn();
+                if (info.getGoodsCode().contains("A")){
+                    maxMinAsyn.execute("oil");
+                }else if (info.getGoodsCode().contains("B")){
+                    maxMinAsyn.execute("aug");
+                }else {
+                    maxMinAsyn.execute("copper");
+                }
+
                 mPopProWindow.dismiss();
             }
         });
@@ -280,12 +292,24 @@ public class TradeFragment extends BaseFragment implements RadioGroup.OnCheckedC
             int num = data.size();
             if (num > 0) {
                 mTitle.setText(data.get(0).getGoods_name());
+
                 UserInfoAsyn userInfoAsyn = new UserInfoAsyn();
                 userInfoAsyn.execute(sp.getString(SharePrenceUtil.OPEN_ID, ""), data.get(0).getGoods_code());
+
                 mMaxNum = data.get(0).getCcdnum();
                 proCode = data.get(0).getGoods_code();
                 firstFragment = ShiJiaCreatFragment.newInstance(proCode, mMaxNum);
                 getFragmentManager().beginTransaction().add(R.id.fragment_content_trade, firstFragment).commit();
+
+                MaxMinAsyn maxMinAsyn = new MaxMinAsyn();
+                if (proCode.contains("A")){
+                    maxMinAsyn.execute("oil");
+                }else if (proCode.contains("B")){
+                    maxMinAsyn.execute("aug");
+                }else {
+                    maxMinAsyn.execute("copper");
+                }
+
                 for (int i = 0; i < num; i++) {
                     TitleInfo info = new TitleInfo();
                     info.setGoodsName(data.get(i).getGoods_name());
@@ -330,7 +354,7 @@ public class TradeFragment extends BaseFragment implements RadioGroup.OnCheckedC
     }
 
     /**
-     * 最高价最低价
+     * 最高价最低价下面数据
      */
     private class MaxAsyn extends AsyncTask<String, Void, String> {
 
@@ -377,6 +401,39 @@ public class TradeFragment extends BaseFragment implements RadioGroup.OnCheckedC
                 MaxAsyn asyn = new MaxAsyn();
                 asyn.execute();
             }
+        }
+    }
+
+    /**
+     * 买入卖出最高价最低价
+     */
+    private class MaxMinAsyn extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... strings) {
+            RequestBody formBody = new FormBody.Builder()
+                    .add("cate", strings[0])
+                    .build();
+            String message = HttpManagerUtil.getHttpManagerUtil().postHttpData(formBody, HttpManagerUtil.MAX_MIN);
+            return message;
+        }
+
+            //{"min":"361.000","max":"361.000"}
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            if (!TextUtils.isEmpty(s)&&s.contains("max")){
+                try {
+                    JSONObject object = new JSONObject(s);
+                    mBuyNum.setText(object.getString("max"));
+                    mBuyNoNum.setText(object.getString("min"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }else {
+                showToast(s);
+            }
+
         }
     }
 }

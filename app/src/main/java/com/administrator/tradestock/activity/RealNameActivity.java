@@ -78,7 +78,7 @@ public class RealNameActivity extends BascActivity implements View.OnClickListen
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-
+            showToast(s);
         }
     }
 }

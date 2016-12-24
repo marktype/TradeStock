@@ -57,5 +57,13 @@
         android:id="@+id/remove_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+    <TextView
+        android:id="@+id/txt_no_data"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:text="暂无数据"
+        android:textSize="20sp"
+        android:visibility="gone"
+        android:gravity="center"/>
 
 </LinearLayout>

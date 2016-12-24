@@ -30,6 +30,7 @@
         <activity android:name=".activity.CompanyDefinedActivity" />
         <activity android:name=".activity.BandBankCardActivity" />
         <activity android:name=".activity.RealNameActivity"></activity>
+        <activity android:name=".activity.BandBankCardListActivity"></activity>
     </application>
 
 </manifest>

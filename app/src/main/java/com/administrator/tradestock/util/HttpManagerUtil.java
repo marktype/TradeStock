@@ -17,7 +17,7 @@ public class HttpManagerUtil {
 
     public static String SERVICE_URL = "http://moni.mybiaojin.com/jy.php";   //服务器地址
 
-    public static String BUY_OR_NO = "http://moni.mybiaojin.com/getapi.php";  //首页买入卖出
+    public static String BUY_OR_NO = "http://moni.mybiaojin.com/getapi.php";  //首页买入卖出下面的值
     public static String INFO_CHECK = SERVICE_URL+"?jy=sever_rand";    //短信验证
     public static String LOGIN = SERVICE_URL+"?jy=app_login";    //登陆
     public static String REGISTER = SERVICE_URL+"?jy=user_reg";    //注册
@@ -41,6 +41,7 @@ public class HttpManagerUtil {
     public static String PUBLIC_INFO = SERVICE_URL+"?jy=gonggao";    //公告
     public static String FUNDS_LOG = SERVICE_URL+"?jy=funds_log";    //账户流水明细
     public static String GOODS_TYPE = SERVICE_URL+"?jy=goodstype";    //商品种类
+    public static String MAX_MIN = SERVICE_URL+"?jy=max_min";    //首页最大值最小值，A(oil)/B(aug)/C(copper)
 
     public static HttpManagerUtil getHttpManagerUtil(){
         if (httpManagerUtil == null){

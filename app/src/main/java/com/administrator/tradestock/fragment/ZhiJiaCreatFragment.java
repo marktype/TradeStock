@@ -194,7 +194,7 @@ public class ZhiJiaCreatFragment extends BaseFragment implements View.OnClickLis
                     .add("profit_limit", strings[4])
                     .add("loss_limit", strings[5])
                     .build();
-            String message =  HttpManagerUtil.getHttpManagerUtil().postHttpData(formBody,HttpManagerUtil.ADD_SERIAL);
+            String message =  HttpManagerUtil.getHttpManagerUtil().postHttpData(formBody,HttpManagerUtil.ZHIJIAJIANCANG);
             return message;
         }
 

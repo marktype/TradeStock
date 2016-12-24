@@ -1,9 +1,12 @@
 package com.administrator.tradestock.fragment;
 
 
+import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,10 +23,16 @@ import com.administrator.tradestock.adapter.DataAdapter;
 import com.administrator.tradestock.adapter.LeftAdapter;
 import com.administrator.tradestock.customview.NoscrollListView;
 import com.administrator.tradestock.customview.SyncHorizontalScrollView;
+import com.administrator.tradestock.model.GoodsInfo;
 import com.administrator.tradestock.model.RemoveBean;
+import com.administrator.tradestock.util.HttpManagerUtil;
+import com.administrator.tradestock.util.SharePrenceUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.FormBody;
+import okhttp3.RequestBody;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -41,6 +50,9 @@ public class HoldFragment extends BaseFragment implements View.OnClickListener{
     private View mView;
     private TextView mMoreTxt;
 
+    private ApplyHttpThread thread;
+    private SharedPreferences sp;
+
     public HoldFragment() {
         // Required empty public constructor
     }
@@ -50,6 +62,7 @@ public class HoldFragment extends BaseFragment implements View.OnClickListener{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         if (mView == null){
+            sp = SharePrenceUtil.getShareSaveUserInfo(getContext());
             mView = inflater.inflate(R.layout.fragment_hold_one_layout, container, false);
             initView();
         }
@@ -181,5 +194,76 @@ public class HoldFragment extends BaseFragment implements View.OnClickListener{
             list.add("巴蜀银="+i);
         }
         return list;
+    }
+
+
+    /**
+     * 持仓列表信息
+     */
+    private class HoldCangAsyn extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... strings) {
+            RequestBody formBody = new FormBody.Builder()
+                    .add("openid", strings[0])
+                    .build();
+            String message = HttpManagerUtil.getHttpManagerUtil().postHttpData(formBody, HttpManagerUtil.HOLD_SERIAL);
+            return message;
+        }
+
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            if (!TextUtils.isEmpty(s)){
+//                Gson gson = new Gson();
+//                GoodsInfo info = gson.fromJson(s,GoodsInfo.class);
+//                parseGoodsInfo(info);
+            }
+
+        }
+    }
+
+    private void parseGoodsInfo(GoodsInfo info) {
+
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        isNow = true;
+        if (thread == null){
+            thread = new ApplyHttpThread();
+            thread.start();
+        }
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        isNow = false;
+        thread = null;
+    }
+
+    private Boolean isNow = true;   //是否停止线程
+    /**
+     * 执行循环请求
+     */
+    private class ApplyHttpThread extends Thread{
+
+
+        @Override
+        public void run() {
+            super.run();
+            while (isNow){
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                HoldCangAsyn asyn = new HoldCangAsyn();
+                asyn.execute(sp.getString(SharePrenceUtil.OPEN_ID,""));
+            }
+        }
     }
 }

@@ -98,7 +98,14 @@ public class BandBankCardActivity extends BascActivity implements View.OnClickLi
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-
+            if (!TextUtils.isEmpty(s)&&s.contains("ok")){
+                showToast("绑定成功");
+                finish();
+            }else if (!TextUtils.isEmpty(s)&&s.contains("smrz_false")){
+                showToast("未进行实名认证");
+            }else {
+                showToast(s);
+            }
         }
     }
 }

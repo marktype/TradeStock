@@ -1,26 +1,37 @@
 package com.administrator.tradestock.fragment;
 
 
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.administrator.tradestock.R;
 import com.administrator.tradestock.adapter.RemoveListAdapter;
 import com.administrator.tradestock.customview.NoscrollListView;
+import com.administrator.tradestock.model.ChiCangBean;
 import com.administrator.tradestock.model.RemoveBean;
+import com.administrator.tradestock.util.HttpManagerUtil;
+import com.administrator.tradestock.util.SharePrenceUtil;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.FormBody;
+import okhttp3.RequestBody;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link ZhiJiaPingFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ZhiJiaPingFragment extends Fragment {
+public class ZhiJiaPingFragment extends BaseFragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -30,6 +41,11 @@ public class ZhiJiaPingFragment extends Fragment {
     private String mParam1;
     private String mParam2;
     private View mView;
+    private SharedPreferences sp;
+    private int page = 0;
+    private TextView mNoData;
+    private RemoveListAdapter adapter;
+    private NoscrollListView mList;
 
     public ZhiJiaPingFragment() {
         // Required empty public constructor
@@ -60,6 +76,7 @@ public class ZhiJiaPingFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        sp = SharePrenceUtil.getShareSaveUserInfo(getContext());
     }
 
     @Override
@@ -69,32 +86,93 @@ public class ZhiJiaPingFragment extends Fragment {
         if (mView == null){
             mView = inflater.inflate(R.layout.fragment_zhi_jia_ping, container, false);
             initWidget();
+            ZhiJiaPingAsyn zhiJiaPingAsyn = new ZhiJiaPingAsyn();
+            zhiJiaPingAsyn.execute(sp.getString(SharePrenceUtil.OPEN_ID,""),""+page);
         }
         return mView;
     }
 
     private void initWidget(){
-        NoscrollListView mList = (NoscrollListView) mView.findViewById(R.id.remove_list);
-        RemoveListAdapter adapter = new RemoveListAdapter(getContext());
-        adapter.setData(getData());
-        mList.setAdapter(adapter);
+        mList = (NoscrollListView) mView.findViewById(R.id.remove_list);
+        mNoData = (TextView) mView.findViewById(R.id.txt_no_data);
+
+        adapter = new RemoveListAdapter(getContext());
+
     }
 
-    private List<RemoveBean> getData(){
-        List<RemoveBean> list = new ArrayList<>();
-        for (int i = 0;i<20;i++){
-            RemoveBean bean = new RemoveBean();
-            bean.setGoodsName("巴蜀银AWW(10kg)");
-            bean.setTextNum("1245644215645");
-            if (i%2 == 0){
-                bean.setIsBuy("1");
-            }else {
-                bean.setIsBuy("2");
-            }
-            bean.setGoodsNum("123");
-            list.add(bean);
+//    private List<RemoveBean> getData(){
+//        List<RemoveBean> list = new ArrayList<>();
+//        for (int i = 0;i<20;i++){
+//            RemoveBean bean = new RemoveBean();
+//            bean.setGoodsName("巴蜀银AWW(10kg)");
+//            bean.setTextNum("1245644215645");
+//            if (i%2 == 0){
+//                bean.setIsBuy("1");
+//            }else {
+//                bean.setIsBuy("2");
+//            }
+//            bean.setGoodsNum("123");
+//            list.add(bean);
+//        }
+//        return list;
+//    }
+
+
+    /**
+     *指价平仓单列表
+     */
+    private class ZhiJiaPingAsyn extends AsyncTask<String,Void,String> {
+
+        @Override
+        protected String doInBackground(String... strings) {
+            RequestBody formBody = new FormBody.Builder()
+                    .add("openid", strings[0])
+                    .add("page", strings[1])
+                    .build();
+            String message =  HttpManagerUtil.getHttpManagerUtil().postHttpData(formBody,HttpManagerUtil.LOAD_PING_LIST);
+            return message;
         }
-        return list;
+
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            if (!TextUtils.isEmpty(s)&&s.contains("serial_list")){
+                Gson gson = new Gson();
+                ChiCangBean chiCangBean = gson.fromJson(s,ChiCangBean.class);
+                parsePingListData(chiCangBean);
+            }else {
+                showToast(s);
+            }
+        }
     }
 
+    private void parsePingListData(ChiCangBean chiCangBean){
+        List<ChiCangBean.SerialListBean> listBeen = chiCangBean.getSerial_list();
+        if (listBeen != null){
+            mNoData.setVisibility(View.GONE);
+
+            List<RemoveBean> list = new ArrayList<>();
+            for (int i = 0;i<listBeen.size();i++){
+                ChiCangBean.SerialListBean serialListBean = listBeen.get(i);
+                RemoveBean bean = new RemoveBean();
+                bean.setGoodsName(serialListBean.getGoods_name());
+                bean.setGoodsNum(serialListBean.getSerial());
+                bean.setTextNum(serialListBean.getNums());
+                //此处需要修改
+                if (i%2 == 0){
+                    bean.setIsBuy("1");
+                }else {
+                    bean.setIsBuy("2");
+                }
+                list.add(bean);
+            }
+            adapter.setData(list);
+            mList.setAdapter(adapter);
+
+        }else {
+            mNoData.setVisibility(View.VISIBLE);
+        }
+
+    }
 }
