@@ -58,8 +58,8 @@ public class DataAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
         RemoveBean bean = (RemoveBean) getItem(position);
-        holder.leve.setText(bean.getTextNum());
-        holder.leveTwo.setText(bean.getGoodsName());
+        holder.leve.setText(bean.getGoodsPrice());
+        holder.leveTwo.setText(bean.getGoodsPrice());
         holder.num.setText(bean.getGoodsNum());
         if (bean.getIsBuy()!= null&&bean.getIsBuy().equals("1")){
             holder.isBuy.setText("卖出");

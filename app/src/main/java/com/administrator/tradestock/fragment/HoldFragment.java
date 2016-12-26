@@ -16,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.administrator.tradestock.R;
@@ -23,10 +24,11 @@ import com.administrator.tradestock.adapter.DataAdapter;
 import com.administrator.tradestock.adapter.LeftAdapter;
 import com.administrator.tradestock.customview.NoscrollListView;
 import com.administrator.tradestock.customview.SyncHorizontalScrollView;
-import com.administrator.tradestock.model.GoodsInfo;
+import com.administrator.tradestock.model.HoldBean;
 import com.administrator.tradestock.model.RemoveBean;
 import com.administrator.tradestock.util.HttpManagerUtil;
 import com.administrator.tradestock.util.SharePrenceUtil;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,12 +48,13 @@ public class HoldFragment extends BaseFragment implements View.OnClickListener{
 
     private SyncHorizontalScrollView mHeaderHorizontal;
     private SyncHorizontalScrollView mDataHorizontal;
-
+    private ScrollView mScrollview;
     private View mView;
     private TextView mMoreTxt;
 
     private ApplyHttpThread thread;
     private SharedPreferences sp;
+    private TextView mNoData;
 
     public HoldFragment() {
         // Required empty public constructor
@@ -75,18 +78,17 @@ public class HoldFragment extends BaseFragment implements View.OnClickListener{
         mData = (NoscrollListView) mView.findViewById(R.id.lv_data);
         mDataHorizontal = (SyncHorizontalScrollView) mView.findViewById(R.id.data_horizontal);
         mHeaderHorizontal = (SyncHorizontalScrollView) mView.findViewById(R.id.header_horizontal);
+        mScrollview = (ScrollView) mView.findViewById(R.id.scroll_content);
         mMoreTxt = (TextView) mView.findViewById(R.id.more_select);
+        mNoData = (TextView) mView.findViewById(R.id.txt_no_data);
 
         mDataHorizontal.setScrollView(mHeaderHorizontal);
         mHeaderHorizontal.setScrollView(mDataHorizontal);
 
         mLeftAdapter= new LeftAdapter(getContext());
-        mLeftAdapter.setData(getNameData());
-        mLeft.setAdapter(mLeftAdapter);
 
         mDataAdapter = new DataAdapter(getContext());
-        mDataAdapter.setData(getListData());
-        mData.setAdapter(mDataAdapter);
+
 
         mMoreTxt.setOnClickListener(this);
     }
@@ -215,16 +217,48 @@ public class HoldFragment extends BaseFragment implements View.OnClickListener{
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            if (!TextUtils.isEmpty(s)){
-//                Gson gson = new Gson();
-//                GoodsInfo info = gson.fromJson(s,GoodsInfo.class);
-//                parseGoodsInfo(info);
+            if (!TextUtils.isEmpty(s)&&s.contains("serial_list")){
+                Gson gson = new Gson();
+                HoldBean info = gson.fromJson(s,HoldBean.class);
+                parseGoodsInfo(info);
+            }else {
+                showToast(s);
             }
-
         }
     }
 
-    private void parseGoodsInfo(GoodsInfo info) {
+    private void parseGoodsInfo(HoldBean info) {
+        List<HoldBean.SerialListBean> serialListBeen = info.getSerial_list();
+        if (serialListBeen != null){
+            mNoData.setVisibility(View.GONE);
+            mScrollview.setVisibility(View.VISIBLE);
+            ArrayList<String> nameList = new ArrayList<>();
+            List<RemoveBean> list = new ArrayList<>();
+            for (int i = 0;i<serialListBeen.size();i++){
+                HoldBean.SerialListBean serialListBean = serialListBeen.get(i);
+                nameList.add(serialListBean.getGoods_name());
+
+                RemoveBean bean = new RemoveBean();
+                bean.setGoodsName(serialListBean.getGoods_name());
+                bean.setGoodsPrice(serialListBean.getCent_buy_point());
+                if (i%2 == 0){
+                    bean.setIsBuy("1");
+                }else {
+                    bean.setIsBuy("2");
+                }
+                bean.setGoodsNum(serialListBean.getNums());
+                list.add(bean);
+            }
+
+            mLeftAdapter.setData(nameList);
+            mLeft.setAdapter(mLeftAdapter);
+            mDataAdapter.setData(list);
+            mData.setAdapter(mDataAdapter);
+
+        }else {
+            mNoData.setVisibility(View.VISIBLE);
+            mScrollview.setVisibility(View.GONE);
+        }
 
     }
 

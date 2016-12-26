@@ -8,6 +8,15 @@ public class RemoveBean {
     private String goodsName;
     private String isBuy;
     private String goodsNum;
+    private String goodsPrice;
+
+    public String getGoodsPrice() {
+        return goodsPrice;
+    }
+
+    public void setGoodsPrice(String goodsPrice) {
+        this.goodsPrice = goodsPrice;
+    }
 
     public String getTextNum() {
         return textNum;

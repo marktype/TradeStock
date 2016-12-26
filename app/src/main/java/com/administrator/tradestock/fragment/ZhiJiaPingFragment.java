@@ -100,22 +100,6 @@ public class ZhiJiaPingFragment extends BaseFragment {
 
     }
 
-//    private List<RemoveBean> getData(){
-//        List<RemoveBean> list = new ArrayList<>();
-//        for (int i = 0;i<20;i++){
-//            RemoveBean bean = new RemoveBean();
-//            bean.setGoodsName("巴蜀银AWW(10kg)");
-//            bean.setTextNum("1245644215645");
-//            if (i%2 == 0){
-//                bean.setIsBuy("1");
-//            }else {
-//                bean.setIsBuy("2");
-//            }
-//            bean.setGoodsNum("123");
-//            list.add(bean);
-//        }
-//        return list;
-//    }
 
 
     /**
