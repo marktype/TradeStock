@@ -216,6 +216,28 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true" />
             </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/read_public"
+                style="@style/my_layout_style"
+                android:layout_marginTop="1dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/status_color">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@mipmap/alter_password"
+                    android:drawablePadding="10dp"
+                    android:text="读取公告"
+                    android:textColor="@color/text_gray_color"
+                    android:textSize="16sp" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true" />
+            </RelativeLayout>
 
             <RelativeLayout
                 android:id="@+id/alter_password"

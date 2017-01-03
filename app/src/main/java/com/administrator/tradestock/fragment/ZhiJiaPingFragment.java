@@ -141,8 +141,8 @@ public class ZhiJiaPingFragment extends BaseFragment {
                 ChiCangBean.SerialListBean serialListBean = listBeen.get(i);
                 RemoveBean bean = new RemoveBean();
                 bean.setGoodsName(serialListBean.getGoods_name());
-                bean.setGoodsNum(serialListBean.getSerial());
-                bean.setTextNum(serialListBean.getNums());
+                bean.setGoodsNum(serialListBean.getNums());
+                bean.setTextNum(serialListBean.getSerial());
                 //此处需要修改
                 if (i%2 == 0){
                     bean.setIsBuy("1");

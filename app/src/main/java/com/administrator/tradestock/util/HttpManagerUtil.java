@@ -31,6 +31,7 @@ public class HttpManagerUtil {
     public static String SELL_SERIAL = SERVICE_URL+"?jy=sell_serial";    //平仓
     public static String HOLD_SERIAL = SERVICE_URL+"?jy=serial";    //持仓+余额
     public static String ADDRESS = SERVICE_URL+"?jy=addr";    //收货地址
+    public static String FUDONG_INDEX = SERVICE_URL+"?jy=index30";    //浮动盈亏
     public static String USER_INFO = SERVICE_URL+"?jy=user";    //个人信息
     public static String MY_CARD_LIST = SERVICE_URL+"?jy=mycard_list";    //我的银行卡列表
     public static String ADD_CARD = SERVICE_URL+"?jy=add_card";    //添加银行卡

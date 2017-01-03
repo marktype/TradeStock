@@ -16,6 +16,7 @@ import com.administrator.tradestock.R;
 import com.administrator.tradestock.activity.AlterPasswordActivity;
 import com.administrator.tradestock.activity.BandBankCardListActivity;
 import com.administrator.tradestock.activity.MyMoenyListActivity;
+import com.administrator.tradestock.activity.NoticeActivity;
 import com.administrator.tradestock.activity.RealNameActivity;
 import com.administrator.tradestock.activity.TradeListActivity;
 import com.administrator.tradestock.model.UserInfo;
@@ -59,6 +60,8 @@ public class MyFragment extends BaseFragment implements View.OnClickListener{
         RelativeLayout mZhuXiao = (RelativeLayout) mView.findViewById(R.id.zhuxiao_system);
         RelativeLayout mBandCard = (RelativeLayout) mView.findViewById(R.id.band_bank_card);
         RelativeLayout mRealName = (RelativeLayout) mView.findViewById(R.id.real_name);
+        RelativeLayout mReadPub = (RelativeLayout) mView.findViewById(R.id.read_public);
+
         mUserName = (TextView) mView.findViewById(R.id.user_name);
         mUserPhone = (TextView) mView.findViewById(R.id.user_phone);
         mUserMoney = (TextView) mView.findViewById(R.id.user_money);
@@ -70,6 +73,7 @@ public class MyFragment extends BaseFragment implements View.OnClickListener{
         mZhuXiao.setOnClickListener(this);
         mBandCard.setOnClickListener(this);
         mRealName.setOnClickListener(this);
+        mReadPub.setOnClickListener(this);
     }
 
 
@@ -99,7 +103,10 @@ public class MyFragment extends BaseFragment implements View.OnClickListener{
                 intent = new Intent(getContext(),RealNameActivity.class);
                 startActivity(intent);
                 break;
-
+            case R.id.read_public:
+                intent = new Intent(getContext(),NoticeActivity.class);
+                startActivity(intent);
+                break;
         }
     }
 

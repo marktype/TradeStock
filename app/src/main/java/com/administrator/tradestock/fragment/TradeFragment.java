@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RadioButton;
@@ -24,6 +25,7 @@ import android.widget.TextView;
 import com.administrator.tradestock.R;
 import com.administrator.tradestock.adapter.GoodsTypeAdapter;
 import com.administrator.tradestock.model.BuyOrNoInfo;
+import com.administrator.tradestock.model.FuDongBean;
 import com.administrator.tradestock.model.GoodTypeBean;
 import com.administrator.tradestock.model.GoodsInfo;
 import com.administrator.tradestock.model.TitleInfo;
@@ -50,12 +52,20 @@ public class TradeFragment extends BaseFragment implements RadioGroup.OnCheckedC
     private ShiJiaPingFragment secondFragment;
     private ZhiJiaCreatFragment thirdFragment;
     private ZhiJiaPingFragment fourFragment;
-    private TextView mTitle,mYue,mUserName,mHigh,mLow,mBuyNum,mBuyNoNum;
+    private TextView mTitle,mYue,mUserName,mHigh,mLow,mBuyNum,mBuyNoNum,mFuDong;
     private List<TitleInfo> goodsTypeList;
     private SharedPreferences sp;
     private int mMaxNum;
     private String proCode;
     private ApplyHttpThread thread;
+    private FuDongHttpThread fudongthread;
+    private int type;   //资源类型
+    private String codeString;    //请求类型
+    private double price;   //买入卖出价格
+    private LinearLayout mBuyLin,mBuyNoLin;
+
+
+
 
     public TradeFragment() {
         // Required empty public constructor
@@ -83,6 +93,8 @@ public class TradeFragment extends BaseFragment implements RadioGroup.OnCheckedC
         if (thread == null){
             thread = new ApplyHttpThread();
             thread.start();
+            fudongthread = new FuDongHttpThread();
+            fudongthread.start();
         }
     }
     @Override
@@ -106,6 +118,10 @@ public class TradeFragment extends BaseFragment implements RadioGroup.OnCheckedC
         mLow = (TextView) mView.findViewById(R.id.max_low);
         mBuyNum = (TextView) mView.findViewById(R.id.buy_num);
         mBuyNoNum = (TextView) mView.findViewById(R.id.buy_no_num);
+        mFuDong = (TextView) mView.findViewById(R.id.fudong_num_txt);
+
+        mBuyLin = (LinearLayout) mView.findViewById(R.id.buy_layout);
+        mBuyNoLin = (LinearLayout) mView.findViewById(R.id.buy_no_layout);
 
         mTitle.setOnClickListener(this);
         mGroup.setOnCheckedChangeListener(this);
@@ -218,13 +234,19 @@ public class TradeFragment extends BaseFragment implements RadioGroup.OnCheckedC
                 firstFragment = ShiJiaCreatFragment.newInstance(proCode, mMaxNum);
                 getFragmentManager().beginTransaction().add(R.id.fragment_content_trade, firstFragment).commit();
 
-                MaxMinAsyn maxMinAsyn = new MaxMinAsyn();
+//                MaxMinAsyn maxMinAsyn = new MaxMinAsyn();
                 if (info.getGoodsCode().contains("A")){
-                    maxMinAsyn.execute("oil");
+//                    maxMinAsyn.execute("oil");
+                    type = 1;
+                    codeString = "oil";
                 }else if (info.getGoodsCode().contains("B")){
-                    maxMinAsyn.execute("aug");
+//                    maxMinAsyn.execute("aug");
+                    type = 2;
+                    codeString = "aug";
                 }else {
-                    maxMinAsyn.execute("copper");
+//                    maxMinAsyn.execute("copper");
+                    type = 3;
+                    codeString = "copper";
                 }
 
                 mPopProWindow.dismiss();
@@ -301,13 +323,19 @@ public class TradeFragment extends BaseFragment implements RadioGroup.OnCheckedC
                 firstFragment = ShiJiaCreatFragment.newInstance(proCode, mMaxNum);
                 getFragmentManager().beginTransaction().add(R.id.fragment_content_trade, firstFragment).commit();
 
-                MaxMinAsyn maxMinAsyn = new MaxMinAsyn();
+//                MaxMinAsyn maxMinAsyn = new MaxMinAsyn();
                 if (proCode.contains("A")){
-                    maxMinAsyn.execute("oil");
+                    type = 1;
+//                    maxMinAsyn.execute("oil");
+                    codeString = "oil";
                 }else if (proCode.contains("B")){
-                    maxMinAsyn.execute("aug");
+                    type = 2;
+//                    maxMinAsyn.execute("aug");
+                    codeString = "aug";
                 }else {
-                    maxMinAsyn.execute("copper");
+                    type = 3;
+//                    maxMinAsyn.execute("copper");
+                    codeString = "copper";
                 }
 
                 for (int i = 0; i < num; i++) {
@@ -378,13 +406,39 @@ public class TradeFragment extends BaseFragment implements RadioGroup.OnCheckedC
     }
 
     private void parseMaxInfo(BuyOrNoInfo info) {
-        mHigh.setText("最高："+info.getOil_price());
-        mLow.setText("最低："+info.getCu_price());
+//        mHigh.setText("最高："+info.getOil_price());
+//        mLow.setText("最低："+info.getCu_price());
+        double proPrice = 0;
+        if (type == 1){
+            mBuyNum.setText(info.getOil_price());
+            mBuyNoNum.setText(info.getOil_price());
+            proPrice = Double.parseDouble(info.getOil_price());
+        }else if (type == 2){
+            mBuyNum.setText(info.getAg_price());
+            mBuyNoNum.setText(info.getAg_price());
+            proPrice = Double.parseDouble(info.getAg_price());
+        }else {
+            mBuyNum.setText(info.getCu_price());
+            mBuyNoNum.setText(info.getCu_price());
+            proPrice = Double.parseDouble(info.getCu_price());
+        }
+
+        if (price>=proPrice){
+            price = proPrice;
+            mBuyLin.setBackgroundResource(R.drawable.rect_circle_red_shape);
+            mBuyNoLin.setBackgroundResource(R.drawable.rect_circle_red_shape);
+        }else {
+            price = proPrice;
+            mBuyLin.setBackgroundResource(R.drawable.rect_circle_yellow_shape);
+            mBuyNoLin.setBackgroundResource(R.drawable.rect_circle_yellow_shape);
+        }
+
+
     }
 
     private Boolean isNow = true;   //是否停止线程
     /**
-     * 执行循环请求
+     * 执行循环请求1s一次
      */
     private class ApplyHttpThread extends Thread{
 
@@ -403,6 +457,31 @@ public class TradeFragment extends BaseFragment implements RadioGroup.OnCheckedC
             }
         }
     }
+    /**
+     * 执行循环请求3s一次
+     */
+    private class FuDongHttpThread extends Thread{
+
+
+        @Override
+        public void run() {
+            super.run();
+            while (isNow){
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                FuDongAsyn fuDongAsyn = new FuDongAsyn();
+                fuDongAsyn.execute(sp.getString(SharePrenceUtil.OPEN_ID, ""));
+
+                MaxMinAsyn maxMinAsyn = new MaxMinAsyn();
+                maxMinAsyn.execute(codeString);
+            }
+        }
+    }
+
+
 
     /**
      * 买入卖出最高价最低价
@@ -425,8 +504,10 @@ public class TradeFragment extends BaseFragment implements RadioGroup.OnCheckedC
             if (!TextUtils.isEmpty(s)&&s.contains("max")){
                 try {
                     JSONObject object = new JSONObject(s);
-                    mBuyNum.setText(object.getString("max"));
-                    mBuyNoNum.setText(object.getString("min"));
+//                    mBuyNum.setText(object.getString("max"));
+//                    mBuyNoNum.setText(object.getString("min"));
+                    mHigh.setText("最高："+object.getString("max"));
+                    mLow.setText("最低："+object.getString("min"));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -435,5 +516,37 @@ public class TradeFragment extends BaseFragment implements RadioGroup.OnCheckedC
             }
 
         }
+    }
+    /**
+     * 浮动盈亏
+     */
+    private class FuDongAsyn extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... strings) {
+            RequestBody formBody = new FormBody.Builder()
+                    .add("openid", strings[0])
+                    .build();
+            String message = HttpManagerUtil.getHttpManagerUtil().postHttpData(formBody, HttpManagerUtil.FUDONG_INDEX);
+            return message;
+        }
+
+            //{"min":"361.000","max":"361.000"}
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            if (!TextUtils.isEmpty(s)&&s.contains("ins_yinkui")){
+                    Gson gson = new Gson();
+                FuDongBean fuDongBean = gson.fromJson(s,FuDongBean.class);
+                parseFudongData(fuDongBean);
+            }else {
+                showToast(s);
+            }
+
+        }
+    }
+
+    private void parseFudongData(FuDongBean fuDongBean){
+        mFuDong.setText(fuDongBean.getIns_yinkui());
     }
 }
