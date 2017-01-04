@@ -16,6 +16,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.administrator.tradestock.R;
+import com.administrator.tradestock.model.BuyInfo;
 import com.administrator.tradestock.util.HttpManagerUtil;
 import com.administrator.tradestock.util.SharePrenceUtil;
 
@@ -31,11 +32,9 @@ public class ZhiJiaCreatFragment extends BaseFragment implements View.OnClickLis
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
     // TODO: Rename and change types of parameters
-    private String mProCode;
-    private int mMaxNum;
+    private BuyInfo mBuyInfo;
     private String mBuyType;
     private SharedPreferences sp;
     private View mView;
@@ -51,15 +50,13 @@ public class ZhiJiaCreatFragment extends BaseFragment implements View.OnClickLis
      * this fragment using the provided parameters.
      *
      * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment ZhiJiaCreatFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ZhiJiaCreatFragment newInstance(String param1, int param2) {
+    public static ZhiJiaCreatFragment newInstance(BuyInfo param1) {
         ZhiJiaCreatFragment fragment = new ZhiJiaCreatFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putInt(ARG_PARAM2, param2);
+        args.putParcelable(ARG_PARAM1, param1);
         fragment.setArguments(args);
         return fragment;
     }
@@ -68,8 +65,7 @@ public class ZhiJiaCreatFragment extends BaseFragment implements View.OnClickLis
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mProCode = getArguments().getString(ARG_PARAM1);
-            mMaxNum = getArguments().getInt(ARG_PARAM2);
+            mBuyInfo = getArguments().getParcelable(ARG_PARAM1);
         }
     }
 
@@ -146,22 +142,24 @@ public class ZhiJiaCreatFragment extends BaseFragment implements View.OnClickLis
                 String ZhiGet = mEditStopGet.getText().toString().trim();
                 if (!TextUtils.isEmpty(num)){
                     int iNum= Integer.parseInt(num);
-                    if (iNum>mMaxNum){
+                    if (iNum>mBuyInfo.getMaxNum()){
                         showToast("输入手数超过最大值");
                     }else if (TextUtils.isEmpty(mBuyType)){
                         showToast("请选择买入或卖出");
                     }else {
                         ZhijiaCreatAsyn shiJiaCreatAsyn = new ZhijiaCreatAsyn();
-                        shiJiaCreatAsyn.execute(num,mProCode,mBuyType,sp.getString(SharePrenceUtil.OPEN_ID,""),ZhiGet,zhiLost);
+                        shiJiaCreatAsyn.execute(num,mBuyInfo.getProCode(),mBuyType,sp.getString(SharePrenceUtil.OPEN_ID,""),ZhiGet,zhiLost);
                     }
                 }else {
                     showToast("手数为空，不能提交");
                 }
                 break;
             case R.id.once_place_order:
+                ZhijiaCreatAsyn shiJiaCreatAsyn = new ZhijiaCreatAsyn();
+                shiJiaCreatAsyn.execute("10",mBuyInfo.getProCode(),"0",sp.getString(SharePrenceUtil.OPEN_ID,""),"","");
                 break;
             case R.id.max_num:
-                mHandNum.setText(mMaxNum+"");
+                mHandNum.setText(mBuyInfo.getMoney()+"");
                 break;
         }
     }

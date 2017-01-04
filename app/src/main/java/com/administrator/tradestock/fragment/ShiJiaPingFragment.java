@@ -16,6 +16,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.administrator.tradestock.R;
+import com.administrator.tradestock.model.BuyInfo;
 import com.administrator.tradestock.util.HttpManagerUtil;
 import com.administrator.tradestock.util.SharePrenceUtil;
 
@@ -31,11 +32,9 @@ public class ShiJiaPingFragment extends BaseFragment implements View.OnClickList
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
     // TODO: Rename and change types of parameters
-    private String mProCode;
-    private int mMaxNum;
+    private BuyInfo mBuyInfo;
     private View mView;
     private String mBuyType;
     private SharedPreferences sp;
@@ -51,15 +50,13 @@ public class ShiJiaPingFragment extends BaseFragment implements View.OnClickList
      * this fragment using the provided parameters.
      *
      * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment ShiJiaPingFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ShiJiaPingFragment newInstance(String param1, int param2) {
+    public static ShiJiaPingFragment newInstance(BuyInfo param1) {
         ShiJiaPingFragment fragment = new ShiJiaPingFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putInt(ARG_PARAM2, param2);
+        args.putParcelable(ARG_PARAM1, param1);
         fragment.setArguments(args);
         return fragment;
     }
@@ -68,8 +65,7 @@ public class ShiJiaPingFragment extends BaseFragment implements View.OnClickList
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mProCode = getArguments().getString(ARG_PARAM1);
-            mMaxNum = getArguments().getInt(ARG_PARAM2);
+            mBuyInfo = getArguments().getParcelable(ARG_PARAM1);
         }
     }
 
@@ -95,7 +91,9 @@ public class ShiJiaPingFragment extends BaseFragment implements View.OnClickList
         mHandNum = (EditText) mView.findViewById(R.id.hand_num);
         TextView mMaxNum = (TextView) mView.findViewById(R.id.max_num);
         RadioGroup mGroup = (RadioGroup) mView.findViewById(R.id.into_group);
+        TextView mPrice = (TextView) mView.findViewById(R.id.price_creat);
 
+        mPrice.setText("￥"+mBuyInfo.getMoney());
 
         mEditPoint.setEnabled(false);
         mEditPoint.setText("");
@@ -142,22 +140,24 @@ public class ShiJiaPingFragment extends BaseFragment implements View.OnClickList
                 String num = mHandNum.getText().toString().trim();
                 if (!TextUtils.isEmpty(num)){
                     int iNum= Integer.parseInt(num);
-                    if (iNum>mMaxNum){
+                    if (iNum>mBuyInfo.getMaxNum()){
                         showToast("输入手数超过最大值");
                     }else if (TextUtils.isEmpty(mBuyType)){
                         showToast("请选择买入或卖出");
                     }else {
                         ShiJiaCreatAsyn shiJiaCreatAsyn = new ShiJiaCreatAsyn();
-                        shiJiaCreatAsyn.execute(num,mProCode,mBuyType,sp.getString(SharePrenceUtil.OPEN_ID,""));
+                        shiJiaCreatAsyn.execute(num,mBuyInfo.getProCode(),mBuyType,sp.getString(SharePrenceUtil.OPEN_ID,""));
                     }
                 }else {
                     showToast("手数为空，不能提交");
                 }
                 break;
             case R.id.once_place_order:
+                ShiJiaCreatAsyn shiJiaCreatAsyn = new ShiJiaCreatAsyn();
+                shiJiaCreatAsyn.execute("10",mBuyInfo.getProCode(),"0",sp.getString(SharePrenceUtil.OPEN_ID,""));
                 break;
             case R.id.max_num:
-                mHandNum.setText(mMaxNum+"");
+                mHandNum.setText(mBuyInfo.getMaxNum()+"");
                 break;
         }
     }

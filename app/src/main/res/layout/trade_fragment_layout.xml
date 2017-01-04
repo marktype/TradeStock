@@ -46,6 +46,7 @@
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@+id/fudong_txt"
                     android:text=""
+                    android:textColor="@color/app_red"
                     android:padding="10dp"
                     />
                 <TextView
@@ -163,13 +164,13 @@
                         android:paddingTop="10dp">
 
                         <TextView
+                            android:id="@+id/buy_txt"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:drawablePadding="10dp"
                             android:drawableRight="@mipmap/down_title"
                             android:text="买入"
                             android:textColor="@android:color/white"
-
                             android:textSize="24sp" />
 
                         <TextView
@@ -211,6 +212,7 @@
                         android:paddingTop="10dp">
 
                         <TextView
+                            android:id="@+id/buy_no_txt"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:drawablePadding="10dp"

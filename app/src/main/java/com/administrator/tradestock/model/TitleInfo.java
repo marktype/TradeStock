@@ -6,6 +6,16 @@ package com.administrator.tradestock.model;
 public class TitleInfo {
     private String goodsName;
     private String goodsCode;
+    private int goodsNum;
+
+
+    public int getGoodsNum() {
+        return goodsNum;
+    }
+
+    public void setGoodsNum(int goodsNum) {
+        this.goodsNum = goodsNum;
+    }
 
     public String getGoodsName() {
         return goodsName;
